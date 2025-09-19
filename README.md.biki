@@ -1,0 +1,108 @@
+* md2biki
+
+Markdownドキュメントを[[Backlog Wiki形式>https://support-ja.backlog.com/hc/ja/articles/360035644274]]に変換するためのコマンドラインツールです。
+
+** インストール
+
+*** ローカルインストール
+
+{code:bash}
+# プロジェクトをクローン
+git clone https://github.com/yourname/md2biki.git
+cd md2biki
+
+# 依存関係のインストール
+npm install
+# または
+yarn install
+
+# ローカルにインストール
+npm run install-local
+# または
+yarn install-local
+{/code}
+
+ローカルインストール後は、どこからでも{code}md2biki{/code}コマンドが使用できます。
+
+*** アンインストール
+
+{code:bash}
+npm run uninstall-local
+# または
+yarn uninstall-local
+{/code}
+
+** 使い方
+
+*** 単一ファイルの変換
+
+{code:bash}
+md2biki README.md
+{/code}
+
+これにより、{code}README.md.biki{/code}ファイルが生成されます。
+
+*** ディレクトリ内のすべてのMarkdownファイルを変換
+
+{code:bash}
+md2biki ./docs
+{/code}
+
+指定されたディレクトリ内のすべての{code}.md{/code}ファイルが再帰的に変換されます。
+
+*** オプション
+
+{code:bash}
+# 出力ディレクトリを指定
+md2biki input.md -o ./output
+
+# 出力ファイルの拡張子を変更（デフォルト: .biki）
+md2biki input.md -e .wiki
+
+# 静かなモード（出力メッセージを抑制）
+md2biki input.md -q
+{/code}
+
+** 変換対応表
+
+| Markdown | Backlog Wiki |
+|----------|--------------|
+| {code}# Header1{/code} | {code}* Header1{/code} |
+| {code}## Header2{/code} | {code}** Header2{/code} |
+| {code}### Header3{/code} | {code}*** Header3{/code} |
+| {code}**Bold**{/code} | {code}''Bold''{/code} |
+| {code}*Italic*{/code} | {code}'''Italic'''{/code} |
+| {code}~~Strike~~{/code} | {code}%%Strike%%{/code} |
+| {code}`code`{/code} | {code}{code}code{/code}{/code} |
+| {code}[Link](url){/code} | {code}[[Link>url]]{/code} |
+| {code}![Image](url){/code} | {code}#image(url){/code} |
+| {code}- Item{/code} | {code}- Item{/code} |
+| {code}1. Item{/code} | {code}+ Item{/code} |
+| {code}> Quote{/code} | {code}>Quote{/code} または {code}{quote}...{/quote}{/code} |
+| Tables | Backlog形式のテーブル |
+| Code blocks | {code}{code}...{/code}{/code} |
+
+** 開発
+
+*** ビルド
+
+{code:bash}
+npm run build
+{/code}
+
+*** テスト
+
+{code:bash}
+npm test
+{/code}
+
+*** 開発モード（ファイル監視）
+
+{code:bash}
+npm run dev
+{/code}
+
+** ライセンス
+
+MIT
+
