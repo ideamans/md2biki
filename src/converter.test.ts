@@ -151,7 +151,7 @@ public class Hello {
 {/code}`);
 });
 
-test('should convert code block with language', async t => {
+test('should convert code block with language (language ignored)', async t => {
   const converter = new MarkdownToBacklogConverter();
   const markdown = `\`\`\`java
 public class Hello {
@@ -161,7 +161,8 @@ public class Hello {
 }
 \`\`\``;
   const result = await converter.convert(markdown);
-  t.is(result.trim(), `{code:java}
+  // Backlog Wiki doesn't support language specification - it's ignored
+  t.is(result.trim(), `{code}
 public class Hello {
   public String sayHello() {
     return "Hello";
@@ -313,7 +314,7 @@ function hello() {
   t.true(result.includes('** Subheader'));
   t.true(result.includes('- Item 1'));
   t.true(result.includes('-- Nested item'));
-  t.true(result.includes('{code:javascript}'));
+  t.true(result.includes('{code}'));
   t.true(result.includes('>This is a quote'));
   t.true(result.includes('|Column 1|Column 2|h'));
   t.true(result.includes('[[Link to Backlog>http://www.backlog.jp/]]'));

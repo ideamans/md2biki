@@ -183,8 +183,8 @@ export class MarkdownToBacklogConverter {
   }
 
   private processCodeBlock(node: CodeNode): string {
-    const lang = node.lang ? `:${node.lang}` : '';
-    return `{code${lang}}\n${node.value}\n{/code}\n\n`;
+    // Backlog Wiki doesn't support language specification in code blocks
+    return `{code}\n${node.value}\n{/code}\n\n`;
   }
 
   private processLink(node: LinkNode): string {

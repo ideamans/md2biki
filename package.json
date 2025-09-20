@@ -1,6 +1,6 @@
 {
   "name": "md2biki",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Convert Markdown documents to Backlog Wiki format",
   "type": "module",
   "main": "dist/index.js",

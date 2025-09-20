@@ -7,16 +7,13 @@ import { glob } from 'glob';
 import chalk from 'chalk';
 import clipboardy from 'clipboardy';
 import { MarkdownToBacklogConverter } from './converter.js';
-import { createReadStream } from 'fs';
-import { pipeline } from 'stream/promises';
-import { Transform } from 'stream';
 
 const program = new Command();
 
 program
   .name('md2biki')
   .description('Markdownドキュメントを Backlog Wiki形式に変換')
-  .version('1.1.0')
+  .version('1.1.1')
   .argument('[path]', 'ファイルパス、ディレクトリパス、- (標準入力)、= (クリップボード)')
   .option('-o, --output <path>', '出力先 (デフォルト: 入力と同じ場所)')
   .option('-e, --ext <extension>', '出力ファイル拡張子 (デフォルト: .biki)', '.biki')
