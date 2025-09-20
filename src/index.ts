@@ -1,1 +1,1 @@
-export { MarkdownToBacklogConverter } from './converter';
+export { MarkdownToBacklogConverter } from './converter.js';

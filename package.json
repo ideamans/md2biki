@@ -1,7 +1,8 @@
 {
   "name": "md2biki",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Convert Markdown documents to Backlog Wiki format",
+  "type": "module",
   "main": "dist/index.js",
   "bin": {
     "md2biki": "./dist/cli.js"
@@ -9,7 +10,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest",
+    "test": "npm run build && ava",
     "install-local": "npm run build && npm link",
     "uninstall-local": "npm unlink -g md2biki"
   },
@@ -24,17 +25,18 @@
   "dependencies": {
     "remark": "^15.0.1",
     "remark-parse": "^11.0.0",
+    "remark-gfm": "^4.0.0",
     "unified": "^11.0.4",
     "unist-util-visit": "^5.0.0",
     "commander": "^11.1.0",
     "glob": "^10.3.10",
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "clipboardy": "^3.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
-    "@types/jest": "^29.5.11",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.1.1",
+    "ava": "^6.0.1",
+    "tsx": "^4.7.0",
     "typescript": "^5.3.3"
   }
 }

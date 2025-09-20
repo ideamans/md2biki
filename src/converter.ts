@@ -1,5 +1,6 @@
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
 import { visit } from 'unist-util-visit';
 
 interface Node {
@@ -87,7 +88,9 @@ export class MarkdownToBacklogConverter {
   private orderedListStack: boolean[] = [];
 
   async convert(markdown: string): Promise<string> {
-    const processor = unified().use(remarkParse);
+    const processor = unified()
+      .use(remarkParse)
+      .use(remarkGfm); // Add GFM support for tables, strikethrough, etc.
     const tree = processor.parse(markdown);
 
     return this.processNode(tree);
@@ -102,10 +105,19 @@ export class MarkdownToBacklogConverter {
         return this.processHeading(node as HeadingNode);
 
       case 'paragraph':
-        return this.processChildren(node as Parent) + '\n\n';
+        // Handle line breaks within paragraphs
+        const paragraphContent = this.processChildren(node as Parent);
+        // In lists, don't add extra newlines
+        if (parent && parent.type === 'listItem') {
+          return paragraphContent;
+        }
+        return paragraphContent + '\n\n';
 
       case 'text':
-        return this.escapeText((node as TextNode).value);
+        const text = (node as TextNode).value;
+        // Convert line breaks within text to &br;
+        const withLineBreaks = text.split('\n').join('&br;');
+        return this.escapeText(withLineBreaks);
 
       case 'strong':
         return `''${this.processChildren(node as StrongNode)}''`;
@@ -163,7 +175,9 @@ export class MarkdownToBacklogConverter {
   }
 
   private processHeading(node: HeadingNode): string {
-    const stars = '*'.repeat(node.depth);
+    // Backlog Wiki supports up to 6 levels of headings
+    const depth = Math.min(node.depth, 6);
+    const stars = '*'.repeat(depth);
     const content = this.processChildren(node);
     return `${stars} ${content}\n\n`;
   }
@@ -214,44 +228,63 @@ export class MarkdownToBacklogConverter {
     const bullet = isOrdered ? '+' : '-';
     const prefix = bullet.repeat(this.listDepth);
 
-    const content = node.children
-      .map((child, index) => {
-        if (child.type === 'paragraph') {
-          return this.processChildren(child as Parent);
-        }
-        return this.processNode(child, node);
-      })
-      .join('')
-      .trim();
+    let content = '';
+    let hasNestedList = false;
+
+    node.children.forEach((child, index) => {
+      if (child.type === 'paragraph') {
+        content += this.processChildren(child as Parent);
+      } else if (child.type === 'list') {
+        hasNestedList = true;
+        content += '\n' + this.processNode(child, node);
+      } else {
+        content += this.processNode(child, node);
+      }
+    });
+
+    content = content.trim();
+
+    // If there's a nested list, don't add extra newline
+    if (hasNestedList) {
+      return `${prefix} ${content.split('\n')[0]}\n${content.split('\n').slice(1).join('\n')}`;
+    }
 
     return `${prefix} ${content}\n`;
   }
 
   private processBlockquote(node: BlockquoteNode): string {
     const content = this.processChildren(node).trim();
-    const lines = content.split('\n');
+    // Check if content contains &br; (which means multiple lines)
+    const hasMultipleLines = content.includes('&br;');
 
-    if (lines.length === 1) {
-      return `>${lines[0]}\n\n`;
+    if (hasMultipleLines) {
+      // Replace &br; with newlines for multi-line quotes
+      const cleanContent = content.replace(/&br;/g, '\n');
+      return `{quote}\n${cleanContent}\n{/quote}\n\n`;
     }
 
-    return `{quote}\n${content}\n{/quote}\n\n`;
+    return `>${content}\n\n`;
   }
 
   private processTable(node: TableNode): string {
     let result = '';
-    let isHeader = true;
+    let headerProcessed = false;
 
     node.children.forEach((row, index) => {
-      if (index === 0) {
-        const cells = (row as Parent).children.map(cell =>
-          this.processChildren(cell as Parent)
-        );
+      const cells = (row as Parent).children.map(cell =>
+        this.processChildren(cell as Parent).trim()
+      );
+
+      // Skip separator row (typically the second row with ---)
+      if (index === 1 && cells.every(cell => cell.match(/^-+$/))) {
+        headerProcessed = true;
+        return;
+      }
+
+      // First actual content row is the header
+      if (index === 0 || (index === 2 && headerProcessed)) {
         result += `|${cells.join('|')}|h\n`;
       } else {
-        const cells = (row as Parent).children.map(cell =>
-          this.processChildren(cell as Parent)
-        );
         result += `|${cells.join('|')}|\n`;
       }
     });
