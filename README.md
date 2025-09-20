@@ -13,7 +13,20 @@ Markdownドキュメントを[Backlog Wiki形式](https://support-ja.backlog.com
 
 ## インストール
 
-### ローカルインストール
+### npm経由でインストール
+
+```bash
+# npmでグローバルインストール
+npm install -g md2biki
+
+# またはyarnでグローバルインストール
+yarn global add md2biki
+
+# npxで直接実行（インストール不要）
+npx md2biki README.md
+```
+
+### 開発版のインストール
 
 ```bash
 # リポジトリをクローン
@@ -25,20 +38,10 @@ npm install
 # または
 yarn install
 
-# ローカルにインストール（グローバルコマンドとして使用可能）
-npm run install-local
+# ビルド
+npm run build
 # または
-yarn install-local
-```
-
-インストール後、どこからでも`md2biki`コマンドが使用できます。
-
-### アンインストール
-
-```bash
-npm run uninstall-local
-# または
-yarn uninstall-local
+yarn build
 ```
 
 ## 使い方
