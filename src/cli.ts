@@ -7,17 +7,23 @@ import { glob } from 'glob';
 import chalk from 'chalk';
 import clipboardy from 'clipboardy';
 import { MarkdownToBacklogConverter } from './converter.js';
+import { createRequire } from 'module';
+
+// Read version from package.json
+const require = createRequire(import.meta.url);
+const packageJson = require('../package.json');
 
 const program = new Command();
 
 program
   .name('md2biki')
   .description('Markdownドキュメントを Backlog Wiki形式に変換')
-  .version('1.1.1')
+  .version(packageJson.version)
   .argument('[path]', 'ファイルパス、ディレクトリパス、- (標準入力)、= (クリップボード)')
   .option('-o, --output <path>', '出力先 (デフォルト: 入力と同じ場所)')
   .option('-e, --ext <extension>', '出力ファイル拡張子 (デフォルト: .biki)', '.biki')
   .option('-q, --quiet', '出力メッセージを抑制')
+  .option('-r, --readable', '空行を保持（デフォルトは空行を削除）')
   .helpOption('-h, --help', 'ヘルプを表示')
   .addHelpText('after', `
 使用例:
@@ -26,6 +32,10 @@ program
   $ md2biki -                      # 標準入力から読み込み、標準出力へ出力
   $ echo "# Title" | md2biki -    # パイプから入力
   $ md2biki =                      # クリップボードから読み込み、クリップボードへ出力
+
+オプション:
+  -r, --readable  空行を保持（読みやすさ重視）
+  -q, --quiet     メッセージを非表示
 
 変換対応:
   # Header      → * Header        (見出し H1-H6)
@@ -57,9 +67,19 @@ async function isDirectory(filePath: string): Promise<boolean> {
   }
 }
 
-async function convertText(markdown: string): Promise<string> {
+async function convertText(markdown: string, removeEmptyLines: boolean = true): Promise<string> {
   const converter = new MarkdownToBacklogConverter();
-  return await converter.convert(markdown);
+  let result = await converter.convert(markdown);
+
+  // Remove empty lines unless readable option is set
+  if (removeEmptyLines) {
+    // Remove multiple consecutive newlines, keeping at most one
+    result = result.replace(/\n\s*\n+/g, '\n');
+    // Remove trailing whitespace
+    result = result.trim() + '\n';
+  }
+
+  return result;
 }
 
 async function readFromStdin(): Promise<string> {
@@ -83,11 +103,12 @@ async function readFromStdin(): Promise<string> {
 async function convertFile(
   inputPath: string,
   outputPath: string,
-  quiet: boolean
+  quiet: boolean,
+  readable: boolean
 ): Promise<void> {
   try {
     const markdown = await fs.readFile(inputPath, 'utf-8');
-    const backlogWiki = await convertText(markdown);
+    const backlogWiki = await convertText(markdown, !readable);
 
     await fs.mkdir(path.dirname(outputPath), { recursive: true });
     await fs.writeFile(outputPath, backlogWiki, 'utf-8');
@@ -119,7 +140,7 @@ async function main() {
       }
 
       const markdown = await readFromStdin();
-      const backlogWiki = await convertText(markdown);
+      const backlogWiki = await convertText(markdown, !options.readable);
 
       process.stdout.write(backlogWiki);
 
@@ -141,7 +162,7 @@ async function main() {
         process.exit(1);
       }
 
-      const backlogWiki = await convertText(markdown);
+      const backlogWiki = await convertText(markdown, !options.readable);
       await clipboardy.write(backlogWiki);
 
       if (!options.quiet) {
@@ -212,7 +233,7 @@ async function main() {
       }
 
       try {
-        await convertFile(file, outputPath, options.quiet);
+        await convertFile(file, outputPath, options.quiet, options.readable);
       } catch (error) {
         errors.push(file);
       }
