@@ -75,6 +75,7 @@ cat document.md | md2biki - > output.biki
 ```bash
 # クリップボードから読み込み、クリップボードへ出力
 md2biki =
+```
 
 ### オプション
 
