@@ -16,7 +16,7 @@ const program = new Command();
 program
   .name('md2biki')
   .description('Markdownドキュメントを Backlog Wiki形式に変換')
-  .version('1.0.0')
+  .version('1.1.0')
   .argument('[path]', 'ファイルパス、ディレクトリパス、- (標準入力)、= (クリップボード)')
   .option('-o, --output <path>', '出力先 (デフォルト: 入力と同じ場所)')
   .option('-e, --ext <extension>', '出力ファイル拡張子 (デフォルト: .biki)', '.biki')
