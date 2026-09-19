@@ -30,7 +30,7 @@ npx md2biki README.md
 
 ```bash
 # リポジトリをクローン
-git clone https://github.com/yourusername/md2biki.git
+git clone https://github.com/ideamans/md2biki.git
 cd md2biki
 
 # 依存関係のインストール
