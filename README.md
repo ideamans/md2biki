@@ -185,3 +185,8 @@ MIT
 ---
 
 **注記**: このツールはBacklog Wikiの公式ツールではありません。[Nulab Inc.](https://nulab.com/)が提供する[Backlog](https://backlog.com/)のWiki記法に変換するサードパーティ製のツールです。
+
+## リリース（メンテナー向け）
+
+package.json の version を上げてコミットし、`git tag vX.Y.Z && git push origin vX.Y.Z`。
+GitHub Actions が npm の Trusted Publishing（OIDC）で公開する（トークンは使わない）。
