@@ -208,3 +208,8 @@ git tag vX.Y.Z && git push origin vX.Y.Z
 - package.json の `repository` はこのリポジトリを指すこと。provenance の検証で照合され、違うと公開が `E422` で落ちる（ワークフローが先に検査する）
 - 前提: npmjs.com の `md2biki` の設定で、Trusted Publisher に GitHub Actions・`ideamans/md2biki`・`publish.yml`・権限 **publish** を登録してあること。
   stage publish の権限だけだと `npm publish` は `E403 OIDC permission denied` になる
+
+## 依存の脆弱性（2026-11-12）
+
+- `glob` は `^10.5.0` を下限にしている（10.4 以前は High の GHSA）。利用者の install でも修正版になるよう、lock ではなく package.json で上げた
+- `glob` 10（moderate、修正は 14.0.2）と、その下の `minimatch` 9（moderate、修正は 11.0.1）が残る。glob 14 は major で Node 20 以上を要求するため、engines（>=16）を変えるときに合わせて上げる
