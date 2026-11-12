@@ -1,11 +1,11 @@
 {
   "name": "md2biki",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Convert Markdown documents to Backlog Wiki format",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
-    "md2biki": "./dist/cli.js"
+    "md2biki": "dist/cli.js"
   },
   "scripts": {
     "build": "tsc",
@@ -28,7 +28,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ideamans/md2biki.git"
+    "url": "git+https://github.com/ideamans/md2biki.git"
   },
   "homepage": "https://github.com/ideamans/md2biki#readme",
   "engines": {
@@ -40,15 +40,15 @@
     "LICENSE"
   ],
   "dependencies": {
-    "remark": "^15.0.1",
-    "remark-parse": "^11.0.0",
-    "remark-gfm": "^4.0.0",
-    "unified": "^11.0.4",
-    "unist-util-visit": "^5.0.0",
+    "chalk": "^4.1.2",
+    "clipboardy": "^3.0.0",
     "commander": "^11.1.0",
     "glob": "^10.5.0",
-    "chalk": "^4.1.2",
-    "clipboardy": "^3.0.0"
+    "remark": "^15.0.1",
+    "remark-gfm": "^4.0.0",
+    "remark-parse": "^11.0.0",
+    "unified": "^11.0.4",
+    "unist-util-visit": "^5.0.0"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",
