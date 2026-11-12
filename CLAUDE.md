@@ -212,4 +212,4 @@ git tag vX.Y.Z && git push origin vX.Y.Z
 ## 依存の脆弱性（2026-11-12）
 
 - `glob` は `^10.5.0` を下限にしている（10.4 以前は High の GHSA）。利用者の install でも修正版になるよう、lock ではなく package.json で上げた
-- `glob` 10（moderate、修正は 14.0.2）と、その下の `minimatch` 9（moderate、修正は 11.0.1）が残る。glob 14 は major で Node 20 以上を要求するため、engines（>=16）を変えるときに合わせて上げる
+- `glob` 10（moderate、修正は 14.0.2）と、その下の `minimatch` 9（moderate、修正は 11.0.1）が残る。glob 14 は major で Node 18 以上を要求するため、engines（>=16）を変えるときに合わせて上げる
